@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Peta Prioritas Remediasi TTM WK Rokan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --peat:#12170F;
+    --canopy:#1C2618;
+    --canopy-2:#233021;
+    --line:#33402F;
+    --sagon:#8BAA5C;
+    --sagon-dim:#5E7A44;
+    --karat:#D98A3D;
+    --bara:#C1453A;
+    --sedang:#D9B23D;
+    --rawa:#5FA8A3;
+    --kabut:#EDE8DC;
+    --kabut-dim:#A9AE9E;
+    --radius:10px;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--peat);
+    color:var(--kabut);
+    font-family:'IBM Plex Sans',sans-serif;
+    line-height:1.5;
+  }
+  h1,h2,h3{font-family:'Space Grotesk',sans-serif; margin:0; font-weight:600;}
+  .mono{font-family:'IBM Plex Mono',monospace;}
+  a{color:var(--rawa);}
+
+  /* ---------- Header ---------- */
+  header{
+    padding:36px 28px 24px;
+    border-bottom:1px solid var(--line);
+    background:
+      radial-gradient(ellipse 900px 300px at 15% -20%, rgba(139,170,92,0.14), transparent),
+      var(--peat);
+  }
+  .eyebrow{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12px;
+    letter-spacing:0.12em;
+    text-transform:uppercase;
+    color:var(--sagon);
+    margin-bottom:10px;
+  }
+  header h1{font-size:clamp(24px,4vw,36px); letter-spacing:-0.01em; max-width:820px;}
+  header p.sub{color:var(--kabut-dim); max-width:640px; margin-top:10px; font-size:15px;}
+
+  .stats{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+    gap:1px;
+    background:var(--line);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    overflow:hidden;
+    margin-top:26px;
+    max-width:920px;
+  }
+  .stat{background:var(--canopy); padding:16px 18px;}
+  .stat .n{font-family:'Space Grotesk',sans-serif; font-size:28px; font-weight:700;}
+  .stat .l{font-size:12px; color:var(--kabut-dim); margin-top:4px;}
+
+  .ahp-note{
+    margin-top:18px; max-width:920px; font-size:12.5px; color:var(--kabut-dim);
+    border-left:2px solid var(--sagon-dim); padding:8px 14px; font-family:'IBM Plex Mono',monospace;
+  }
+  .ahp-note b{color:var(--kabut);}
+
+  /* ---------- Layout ---------- */
+  main{padding:28px; max-width:1440px; margin:0 auto;}
+  section{margin-bottom:34px;}
+  .section-head{display:flex; align-items:baseline; justify-content:space-between; gap:12px; margin-bottom:14px; flex-wrap:wrap;}
+  .section-head h2{font-size:19px;}
+  .section-head .hint{font-size:12.5px; color:var(--kabut-dim);}
+
+  .grid-map{
+    display:grid;
+    grid-template-columns:1.6fr 1fr;
+    gap:16px;
+  }
+  @media(max-width:920px){.grid-map{grid-template-columns:1fr;}}
+
+  .panel{
+    background:var(--canopy);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    overflow:hidden;
+  }
+  .panel-title{
+    padding:12px 16px; border-bottom:1px solid var(--line);
+    display:flex; align-items:center; justify-content:space-between;
+    font-family:'IBM Plex Mono',monospace; font-size:12px; letter-spacing:0.06em; text-transform:uppercase; color:var(--kabut-dim);
+  }
+  .panel-title a{font-size:11px;}
+  #gee-frame{width:100%; height:560px; border:0; display:block; background:#0c0f0a;}
+
+  /* ---------- Filter / list ---------- */
+  .chips{display:flex; flex-wrap:wrap; gap:8px; padding:14px 16px;}
+  .chip{
+    font-family:'IBM Plex Mono',monospace; font-size:11.5px;
+    padding:6px 11px; border-radius:999px; border:1px solid var(--line);
+    cursor:pointer; background:transparent; color:var(--kabut-dim);
+    transition:all .15s ease; user-select:none;
+  }
+  .chip:hover{border-color:var(--kabut-dim); color:var(--kabut);}
+  .chip.active{color:var(--peat); font-weight:600; border-color:transparent;}
+
+  .titik-list{max-height:400px; overflow-y:auto; padding:0 8px 10px;}
+  .titik-item{
+    display:flex; align-items:center; gap:10px;
+    padding:9px 8px; border-radius:8px; cursor:pointer;
+    border:1px solid transparent;
+  }
+  .titik-item:hover{background:var(--canopy-2);}
+  .titik-item.selected{border-color:var(--sagon-dim); background:var(--canopy-2);}
+  .dot{width:9px; height:9px; border-radius:50%; flex-shrink:0;}
+  .titik-item .kode{font-family:'IBM Plex Mono',monospace; font-size:12.5px; font-weight:600;}
+  .titik-item .kelas{font-size:11px; color:var(--kabut-dim); margin-left:auto;}
+
+  /* ---------- Trend charts (SVG) ---------- */
+  .chart-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:16px;}
+  @media(max-width:1100px){.chart-grid{grid-template-columns:1fr;}}
+  .chart-card-title{padding:12px 16px 0; font-family:'IBM Plex Mono',monospace; font-size:12px; color:var(--kabut-dim); letter-spacing:0.05em; text-transform:uppercase;}
+  .chart-svg-wrap{padding:8px 12px 14px;}
+  .chart-svg-wrap svg{width:100%; height:auto; display:block;}
+
+  .legend{display:flex; flex-wrap:wrap; gap:8px; padding:14px 16px; border-top:1px solid var(--line);}
+  .legend-chip{
+    display:flex; align-items:center; gap:6px;
+    font-family:'IBM Plex Mono',monospace; font-size:11px;
+    padding:5px 10px; border-radius:999px; border:1px solid var(--line);
+    background:transparent; color:var(--kabut-dim); cursor:pointer; opacity:0.55;
+    transition:opacity .15s ease;
+  }
+  .legend-chip.active{opacity:1; color:var(--kabut); border-color:var(--kabut-dim);}
+  .legend-chip .sw{width:9px; height:9px; border-radius:50%; background:var(--c); flex-shrink:0;}
+
+  th[colspan]{text-align:center !important;}
+
+  /* ---------- Table ---------- */
+  table{width:100%; border-collapse:collapse; font-size:13px;}
+  thead th{
+    text-align:left; padding:10px 12px; font-family:'IBM Plex Mono',monospace;
+    font-size:11px; letter-spacing:0.05em; text-transform:uppercase; color:var(--kabut-dim);
+    border-bottom:1px solid var(--line); position:sticky; top:0; background:var(--canopy);
+  }
+  tbody td{padding:10px 12px; border-bottom:1px solid var(--line); vertical-align:middle;}
+  tbody tr:hover{background:var(--canopy-2);}
+  .foto-thumb{width:52px; height:52px; object-fit:cover; border-radius:6px; background:var(--canopy-2); display:block;}
+  .foto-thumb.err{display:flex; align-items:center; justify-content:center; font-size:9px; color:var(--kabut-dim); text-align:center;}
+  .pill{font-family:'IBM Plex Mono',monospace; font-size:11px; padding:3px 9px; border-radius:999px; display:inline-block;}
+  .table-scroll{max-height:520px; overflow:auto;}
+
+  footer{padding:24px 28px 40px; color:var(--kabut-dim); font-size:12px; border-top:1px solid var(--line); font-family:'IBM Plex Mono',monospace;}
+  footer a{color:var(--sagon);}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="eyebrow">WK Rokan · Remote Sensing Monitoring</div>
+  <h1>Peta Prioritas Remediasi Tanah Terkontaminasi Minyak (TTM)</h1>
+  <p class="sub">Pemantauan pemulihan 10 titik TTM periode 2021–2025 menggunakan indeks vegetasi (NDVI), kelembapan tanah (NDMI), dan lahan terbuka (BSI) dari citra satelit, dioverlay dengan skor prioritas hasil AHP.</p>
+
+  <div class="stats" id="stats"></div>
+
+  <div class="ahp-note">Bobot AHP (Weighted Overlay): <b>NDVI 53.9%</b> · <b>BSI 29.7%</b> · <b>NDMI 16.4%</b>. Semakin besar bobot NDVI, semakin dominan pengaruh tutupan vegetasi terhadap skor prioritas.</div>
+</header>
+
+<main>
+
+  <section id="peta">
+    <div class="section-head">
+      <h2>Peta Sebaran &amp; Citra Satelit</h2>
+      <div class="hint">Klik titik pada daftar untuk menyorot di grafik tren</div>
+    </div>
+    <div class="grid-map">
+      <div class="panel">
+        <div class="panel-title">
+          <span>GEE App: Peta Prioritas Remediasi TTM</span>
+          <a href="https://aisyahdr.users.earthengine.app/view/peta-prioritas-remediasi-ttm-rokan" target="_blank" rel="noopener">buka penuh ↗</a>
+        </div>
+        <iframe id="gee-frame" src="https://aisyahdr.users.earthengine.app/view/peta-prioritas-remediasi-ttm-rokan" loading="lazy" title="GEE App Peta Prioritas Remediasi TTM"></iframe>
+      </div>
+      <div class="panel">
+        <div class="panel-title"><span>Filter Kelas Prioritas</span></div>
+        <div class="chips" id="kelasChips"></div>
+        <div class="panel-title"><span>Titik TTM (<span id="titikCount"></span>)</span></div>
+        <div class="titik-list" id="titikList"></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="tren">
+    <div class="section-head">
+      <h2>Tren Indeks per Titik (2021–2025)</h2>
+      <div class="hint">Klik nama titik di daftar legenda untuk menyorot satu jalur, klik lagi utk tampilkan semua</div>
+    </div>
+    <div class="panel">
+      <div class="chart-grid">
+        <div>
+          <div class="chart-card-title">NDVI (Nilai Vegetasi)</div>
+          <div class="chart-svg-wrap" id="chartNDVI"></div>
+        </div>
+        <div>
+          <div class="chart-card-title">NDMI (Kelembapan Tanah)</div>
+          <div class="chart-svg-wrap" id="chartNDMI"></div>
+        </div>
+        <div>
+          <div class="chart-card-title">BSI (Lahan Terbuka)</div>
+          <div class="chart-svg-wrap" id="chartBSI"></div>
+        </div>
+      </div>
+      <div class="legend" id="chartLegend"></div>
+    </div>
+  </section>
+
+  <section id="ringkasan-tren">
+    <div class="section-head">
+      <h2>Ringkasan Tren 2021 → 2025</h2>
+      <div class="hint">Setara sheet Analisis_Trend_TTM di Excel kamu</div>
+    </div>
+    <div class="panel">
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th rowspan="2">Kode</th>
+              <th colspan="4">NDVI</th>
+              <th colspan="4">NDMI</th>
+              <th colspan="4">BSI</th>
+            </tr>
+            <tr>
+              <th>2021</th><th>2025</th><th>Δ</th><th>Tren</th>
+              <th>2021</th><th>2025</th><th>Δ</th><th>Tren</th>
+              <th>2021</th><th>2025</th><th>Δ</th><th>Tren</th>
+            </tr>
+          </thead>
+          <tbody id="trendTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section id="tabel">
+    <div class="section-head">
+      <h2>Detail Titik</h2>
+      <div class="hint" id="tableHint"></div>
+    </div>
+    <div class="panel">
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>Foto</th><th>Kode</th><th>Koordinat</th><th>Kelas Prioritas</th>
+              <th>Skor</th><th>NDVI '25</th><th>NDMI '25</th><th>BSI '25</th><th>Kondisi</th>
+            </tr>
+          </thead>
+          <tbody id="tableBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  Sumber data: TTM_Master_2021_2025_FIXED.xlsx (Dokumentasi Lapangan &amp; Citra Satelit) · Peta: <a href="https://aisyahdr.users.earthengine.app/view/peta-prioritas-remediasi-ttm-rokan" target="_blank" rel="noopener">Google Earth Engine App</a> · Dibuat untuk WK Rokan
+</footer>
+
+<script>
+const DATA = {"detail": [{"Kode": "3R63A", "Latitude": 1.3555, "Longitude": 101.2909, "Skor_Prioritas": 2, "Kelas_Prioritas": "Rendah", "NDVI_2025": 0.664, "NDMI_2025": 0.115, "BSI_2025": -0.087, "Kondisi": "Tanah Terkontaminasi Minyak", "Sumber": "Dokumentasi Lapangan", "Foto_URL": "https://drive.google.com/uc?export=view&id=1fqu1CHQa3zt3KNRqpbCydR7EWcpteB6J"}, {"Kode": "TTM02", "Latitude": 1.2979, "Longitude": 101.2392, "Skor_Prioritas": 4, "Kelas_Prioritas": "Tinggi", "NDVI_2025": 0.467, "NDMI_2025": 0.013, "BSI_2025": 0.035, "Kondisi": "Tanah Terkontaminasi Minyak", "Sumber": "Dokumentasi Lapangan", "Foto_URL": "https://drive.google.com/uc?export=view&id=1s2DvCdKfpXJGFicPCa4X42n3KEylvFev"}, {"Kode": "6G0805A", "Latitude": 1.3724, "Longitude": 101.2431, "Skor_Prioritas": 4, "Kelas_Prioritas": "Tinggi", "NDVI_2025": 0.114, "NDMI_2025": -0.082, "BSI_2025": 0.154, "Kondisi": "Tanah Terkontaminasi Minyak", "Sumber": "Dokumentasi Lapangan", "Foto_URL": "https://drive.google.com/uc?export=view&id=1U7P0IipXk3-bBT3rbP8j2DkSUEhNY66X"}, {"Kode": "6N61C", "Latitude": 1.3219, "Longitude": 101.2403, "Skor_Prioritas": 1, "Kelas_Prioritas": "Sangat Rendah", "NDVI_2025": 0.711, "NDMI_2025": 0.161, "BSI_2025": -0.127, "Kondisi": "Tanah Terkontaminasi Minyak", "Sumber": "Dokumentasi Lapangan", "Foto_URL": "https://drive.google.com/uc?export=view&id=1hb5YTesC4THVTZiVm7otpnbbf_e3jsnA"}, {"Kode": "6P41C", "Latitude": 1.3157, "Longitude": 101.2404, "Skor_Prioritas": 1, "Kelas_Prioritas": "Sangat Rendah", "NDVI_2025": 0.807, "NDMI_2025": 0.282, "BSI_2025": -0.25, "Kondisi": "Tanah Terkontaminasi Minyak", "Sumber": "Dokumentasi Lapangan", "Foto_URL": "https://drive.google.com/uc?export=view&id=15d1A2k2G6MrvZ3k_eRE1nLwyJ8PMjomb"}, {"Kode": "7P70A", "Latitude": 1.3125, "Longitude": 101.2513, "Skor_Prioritas": 1, "Kelas_Prioritas": "Sangat Rendah", "NDVI_2025": 0.54, "NDMI_2025": 0.044, "BSI_2025": 0.004, "Kondisi": "Tanah Terkontaminasi Minyak", "Sumber": "Dokumentasi Lapangan", "Foto_URL": "https://drive.google.com/uc?export=view&id=1ir6viI6ebCpee41KG3H95qG67uO_1h2b"}, {"Kode": "KL016", "Latitude": 1.5275, "Longitude": 101.0295, "Skor_Prioritas": 4, "Kelas_Prioritas": "Tinggi", "NDVI_2025": 0.028, "NDMI_2025": -0.011, "BSI_2025": 0.126, "Kondisi": "Tanah Terkontaminasi Minyak", "Sumber": "Dokumentasi Lapangan", "Foto_URL": "https://drive.google.com/uc?export=view&id=19xn3mufn0DFKWZHnRgTj6XpYG_gXKgXw"}, {"Kode": "PA087", "Latitude": 1.3241, "Longitude": 101.0721, "Skor_Prioritas": 4, "Kelas_Prioritas": "Tinggi", "NDVI_2025": 0.278, "NDMI_2025": 0.093, "BSI_2025": 0.019, "Kondisi": "Tanah Terkontaminasi Minyak", "Sumber": "Dokumentasi Lapangan", "Foto_URL": "https://drive.google.com/uc?export=view&id=1lWOsx56gwfY5emPyoRSs_93OwPAkqk6Q"}, {"Kode": "PA243", "Latitude": 1.3386, "Longitude": 101.0579, "Skor_Prioritas": 4, "Kelas_Prioritas": "Tinggi", "NDVI_2025": 0.038, "NDMI_2025": 0.047, "BSI_2025": 0.135, "Kondisi": "Tanah Terkontaminasi Minyak", "Sumber": "Dokumentasi Lapangan", "Foto_URL": "https://drive.google.com/uc?export=view&id=17WS1_hQ_5gYlL4t82m229cD1SK9DM1xF"}, {"Kode": "PETANI00200", "Latitude": 1.3453, "Longitude": 101.0521, "Skor_Prioritas": 5, "Kelas_Prioritas": "Sangat Tinggi", "NDVI_2025": 0.02, "NDMI_2025": -0.085, "BSI_2025": 0.184, "Kondisi": "Tanah Terkontaminasi Minyak", "Sumber": "Dokumentasi Lapangan", "Foto_URL": "https://drive.google.com/uc?export=view&id=1qWBl5hippjMvKwGrqVJPaL524uTQSAVS"}], "indeks": [{"Kode": "3R63A", "Tahun": 2021, "NDVI": 0.7286, "BSI": -0.2717, "NDMI": 0.3157}, {"Kode": "3R63A", "Tahun": 2022, "NDVI": 0.8177, "BSI": -0.2891, "NDMI": 0.327}, {"Kode": "3R63A", "Tahun": 2023, "NDVI": 0.756, "BSI": -0.2414, "NDMI": 0.2846}, {"Kode": "3R63A", "Tahun": 2024, "NDVI": 0.7455, "BSI": -0.2221, "NDMI": 0.2582}, {"Kode": "3R63A", "Tahun": 2025, "NDVI": 0.6638, "BSI": -0.0869, "NDMI": 0.1153}, {"Kode": "6G0805A", "Tahun": 2021, "NDVI": 0.6258, "BSI": -0.1632, "NDMI": 0.2265}, {"Kode": "6G0805A", "Tahun": 2022, "NDVI": 0.5177, "BSI": -0.1014, "NDMI": 0.1735}, {"Kode": "6G0805A", "Tahun": 2023, "NDVI": 0.1114, "BSI": 0.1127, "NDMI": -0.0185}, {"Kode": "6G0805A", "Tahun": 2024, "NDVI": 0.0973, "BSI": 0.1039, "NDMI": -0.016}, {"Kode": "6G0805A", "Tahun": 2025, "NDVI": 0.1138, "BSI": 0.1543, "NDMI": -0.0816}, {"Kode": "6N61C", "Tahun": 2021, "NDVI": 0.6776, "BSI": -0.149, "NDMI": 0.1882}, {"Kode": "6N61C", "Tahun": 2022, "NDVI": 0.6209, "BSI": -0.0923, "NDMI": 0.1463}, {"Kode": "6N61C", "Tahun": 2023, "NDVI": 0.6716, "BSI": -0.1261, "NDMI": 0.1633}, {"Kode": "6N61C", "Tahun": 2024, "NDVI": 0.651, "BSI": -0.1291, "NDMI": 0.1685}, {"Kode": "6N61C", "Tahun": 2025, "NDVI": 0.7115, "BSI": -0.1273, "NDMI": 0.1613}, {"Kode": "6P41C", "Tahun": 2021, "NDVI": 0.7623, "BSI": -0.2227, "NDMI": 0.2653}, {"Kode": "6P41C", "Tahun": 2022, "NDVI": 0.8081, "BSI": -0.2514, "NDMI": 0.2818}, {"Kode": "6P41C", "Tahun": 2023, "NDVI": 0.7862, "BSI": -0.2569, "NDMI": 0.2898}, {"Kode": "6P41C", "Tahun": 2024, "NDVI": 0.7323, "BSI": -0.2498, "NDMI": 0.2978}, {"Kode": "6P41C", "Tahun": 2025, "NDVI": 0.8074, "BSI": -0.2502, "NDMI": 0.2823}, {"Kode": "7P70A", "Tahun": 2021, "NDVI": 0.4483, "BSI": 0.0032, "NDMI": 0.0428}, {"Kode": "7P70A", "Tahun": 2022, "NDVI": 0.5154, "BSI": 0.016, "NDMI": 0.0304}, {"Kode": "7P70A", "Tahun": 2023, "NDVI": 0.5404, "BSI": -0.0192, "NDMI": 0.0698}, {"Kode": "7P70A", "Tahun": 2024, "NDVI": 0.5018, "BSI": -0.0124, "NDMI": 0.0628}, {"Kode": "7P70A", "Tahun": 2025, "NDVI": 0.5403, "BSI": 0.0038, "NDMI": 0.0438}, {"Kode": "KL016", "Tahun": 2021, "NDVI": 0.5683, "BSI": -0.0284, "NDMI": 0.062}, {"Kode": "KL016", "Tahun": 2022, "NDVI": 0.4672, "BSI": -0.0052, "NDMI": 0.0364}, {"Kode": "KL016", "Tahun": 2023, "NDVI": 0.7027, "BSI": -0.1846, "NDMI": 0.2104}, {"Kode": "KL016", "Tahun": 2024, "NDVI": 0.1071, "BSI": 0.0449, "NDMI": 0.0824}, {"Kode": "KL016", "Tahun": 2025, "NDVI": 0.0276, "BSI": 0.1258, "NDMI": -0.0109}, {"Kode": "PA087", "Tahun": 2021, "NDVI": 0.1878, "BSI": 0.0603, "NDMI": 0.0457}, {"Kode": "PA087", "Tahun": 2022, "NDVI": 0.3137, "BSI": 0.0123, "NDMI": 0.0836}, {"Kode": "PA087", "Tahun": 2023, "NDVI": 0.3015, "BSI": -0.0188, "NDMI": 0.1434}, {"Kode": "PA087", "Tahun": 2024, "NDVI": 0.2512, "BSI": -0.0055, "NDMI": 0.1414}, {"Kode": "PA087", "Tahun": 2025, "NDVI": 0.2782, "BSI": 0.0194, "NDMI": 0.0935}, {"Kode": "PA243", "Tahun": 2021, "NDVI": 0.7561, "BSI": -0.218, "NDMI": 0.246}, {"Kode": "PA243", "Tahun": 2022, "NDVI": 0.7942, "BSI": -0.2296, "NDMI": 0.2659}, {"Kode": "PA243", "Tahun": 2023, "NDVI": 0.7402, "BSI": -0.2052, "NDMI": 0.2406}, {"Kode": "PA243", "Tahun": 2024, "NDVI": 0.0754, "BSI": 0.0783, "NDMI": 0.0996}, {"Kode": "PA243", "Tahun": 2025, "NDVI": 0.038, "BSI": 0.1354, "NDMI": 0.0471}, {"Kode": "PETANI00200", "Tahun": 2021, "NDVI": 0.7495, "BSI": -0.2067, "NDMI": 0.2346}, {"Kode": "PETANI00200", "Tahun": 2022, "NDVI": 0.7711, "BSI": -0.2165, "NDMI": 0.2597}, {"Kode": "PETANI00200", "Tahun": 2023, "NDVI": 0.6259, "BSI": -0.2101, "NDMI": 0.2595}, {"Kode": "PETANI00200", "Tahun": 2024, "NDVI": 0.0887, "BSI": 0.0701, "NDMI": 0.0578}, {"Kode": "PETANI00200", "Tahun": 2025, "NDVI": 0.02, "BSI": 0.184, "NDMI": -0.085}, {"Kode": "TTM02", "Tahun": 2021, "NDVI": 0.5495, "BSI": -0.0338, "NDMI": 0.0822}, {"Kode": "TTM02", "Tahun": 2022, "NDVI": 0.443, "BSI": 0.0279, "NDMI": 0.0312}, {"Kode": "TTM02", "Tahun": 2023, "NDVI": 0.4586, "BSI": 0.0122, "NDMI": 0.045}, {"Kode": "TTM02", "Tahun": 2024, "NDVI": 0.4628, "BSI": -0.0065, "NDMI": 0.052}, {"Kode": "TTM02", "Tahun": 2025, "NDVI": 0.4669, "BSI": 0.0347, "NDMI": 0.0134}], "trend": [{"Kode": "3R63A", "NDVI_2021": 0.729, "NDVI_2025": 0.664, "NDVI_Mean": 0.7423, "NDVI_Std": 0.0553, "NDVI_Delta": -0.065, "NDVI_Tren": "Memburuk", "NDMI_2021": 0.316, "NDMI_2025": 0.115, "NDMI_Mean": 0.2602, "NDMI_Std": 0.0854, "NDMI_Delta": -0.201, "NDMI_Tren": "Memburuk", "BSI_2021": -0.272, "BSI_2025": -0.087, "BSI_Mean": -0.2222, "BSI_Std": 0.08, "BSI_Delta": 0.185, "BSI_Tren": "Memburuk", "NDVI_Slope": -0.0202, "NDMI_Slope": -0.047, "BSI_Slope": 0.0437}, {"Kode": "6G0805A", "NDVI_2021": 0.626, "NDVI_2025": 0.114, "NDVI_Mean": 0.2932, "NDVI_Std": 0.2572, "NDVI_Delta": -0.512, "NDVI_Tren": "Memburuk", "NDMI_2021": 0.226, "NDMI_2025": -0.082, "NDMI_Mean": 0.0568, "NDMI_Std": 0.1347, "NDMI_Delta": -0.308, "NDMI_Tren": "Memburuk", "BSI_2021": -0.163, "BSI_2025": 0.154, "BSI_Mean": 0.0212, "BSI_Std": 0.1431, "BSI_Delta": 0.317, "BSI_Tren": "Memburuk", "NDVI_Slope": -0.1445, "NDMI_Slope": -0.0806, "BSI_Slope": 0.084}, {"Kode": "6N61C", "NDVI_2021": 0.678, "NDVI_2025": 0.711, "NDVI_Mean": 0.6665, "NDVI_Std": 0.0335, "NDVI_Delta": 0.033, "NDVI_Tren": "Membaik", "NDMI_2021": 0.188, "NDMI_2025": 0.161, "NDMI_Mean": 0.1655, "NDMI_Std": 0.0151, "NDMI_Delta": -0.027, "NDMI_Tren": "Memburuk", "BSI_2021": -0.149, "BSI_2025": -0.127, "BSI_Mean": -0.1248, "BSI_Std": 0.0205, "BSI_Delta": 0.022, "BSI_Tren": "Memburuk", "NDVI_Slope": 0.0098, "NDMI_Slope": -0.0031, "BSI_Slope": 0.0007}, {"Kode": "6P41C", "NDVI_2021": 0.762, "NDVI_2025": 0.807, "NDVI_Mean": 0.7793, "NDVI_Std": 0.0323, "NDVI_Delta": 0.045, "NDVI_Tren": "Membaik", "NDMI_2021": 0.265, "NDMI_2025": 0.282, "NDMI_Mean": 0.2834, "NDMI_Std": 0.0121, "NDMI_Delta": 0.017, "NDMI_Tren": "Membaik", "BSI_2021": -0.223, "BSI_2025": -0.25, "BSI_Mean": -0.2462, "BSI_Std": 0.0134, "BSI_Delta": -0.027, "BSI_Tren": "Membaik", "NDVI_Slope": 0.0014, "NDMI_Slope": 0.005, "BSI_Slope": -0.0053}, {"Kode": "7P70A", "NDVI_2021": 0.448, "NDVI_2025": 0.54, "NDVI_Mean": 0.5092, "NDVI_Std": 0.0379, "NDVI_Delta": 0.092, "NDVI_Tren": "Membaik", "NDMI_2021": 0.043, "NDMI_2025": 0.044, "NDMI_Mean": 0.0499, "NDMI_Std": 0.016, "NDMI_Delta": 0.001, "NDMI_Tren": "Membaik", "BSI_2021": 0.003, "BSI_2025": 0.004, "BSI_Mean": -0.0017, "BSI_Std": 0.014, "BSI_Delta": 0.001, "BSI_Tren": "Memburuk", "NDVI_Slope": 0.017, "NDMI_Slope": 0.0034, "BSI_Slope": -0.0027}, {"Kode": "KL016", "NDVI_2021": 0.568, "NDVI_2025": 0.028, "NDVI_Mean": 0.3746, "NDVI_Std": 0.294, "NDVI_Delta": -0.54, "NDVI_Tren": "Memburuk", "NDMI_2021": 0.062, "NDMI_2025": -0.011, "NDMI_Mean": 0.076, "NDMI_Std": 0.0828, "NDMI_Delta": -0.073, "NDMI_Tren": "Memburuk", "BSI_2021": -0.028, "BSI_2025": 0.126, "BSI_Mean": -0.0095, "BSI_Std": 0.1143, "BSI_Delta": 0.154, "BSI_Tren": "Memburuk", "NDVI_Slope": -0.1441, "NDMI_Slope": -0.01, "BSI_Slope": 0.0359}, {"Kode": "PA087", "NDVI_2021": 0.188, "NDVI_2025": 0.278, "NDVI_Mean": 0.2665, "NDVI_Std": 0.05, "NDVI_Delta": 0.09, "NDVI_Tren": "Membaik", "NDMI_2021": 0.046, "NDMI_2025": 0.093, "NDMI_Mean": 0.1015, "NDMI_Std": 0.0414, "NDMI_Delta": 0.047, "NDMI_Tren": "Membaik", "BSI_2021": 0.06, "BSI_2025": 0.019, "BSI_Mean": 0.0136, "BSI_Std": 0.0301, "BSI_Delta": -0.041, "BSI_Tren": "Membaik", "NDVI_Slope": 0.0118, "NDMI_Slope": 0.0153, "BSI_Slope": -0.01}, {"Kode": "PA243", "NDVI_2021": 0.756, "NDVI_2025": 0.038, "NDVI_Mean": 0.4808, "NDVI_Std": 0.3878, "NDVI_Delta": -0.718, "NDVI_Tren": "Memburuk", "NDMI_2021": 0.246, "NDMI_2025": 0.047, "NDMI_Mean": 0.1798, "NDMI_Std": 0.0994, "NDMI_Delta": -0.199, "NDMI_Tren": "Memburuk", "BSI_2021": -0.218, "BSI_2025": 0.135, "BSI_Mean": -0.0878, "BSI_Std": 0.1791, "BSI_Delta": 0.353, "BSI_Tren": "Memburuk", "NDVI_Slope": -0.2155, "NDMI_Slope": -0.0564, "BSI_Slope": 0.1015}, {"Kode": "PETANI00200", "NDVI_2021": 0.75, "NDVI_2025": 0.02, "NDVI_Mean": 0.4511, "NDVI_Std": 0.3672, "NDVI_Delta": -0.73, "NDVI_Tren": "Memburuk", "NDMI_2021": 0.235, "NDMI_2025": -0.085, "NDMI_Mean": 0.1453, "NDMI_Std": 0.154, "NDMI_Delta": -0.32, "NDMI_Tren": "Memburuk", "BSI_2021": -0.207, "BSI_2025": 0.184, "BSI_Mean": -0.0758, "BSI_Std": 0.1896, "BSI_Delta": 0.391, "BSI_Tren": "Memburuk", "NDVI_Slope": -0.2141, "NDMI_Slope": -0.0841, "BSI_Slope": 0.1068}, {"Kode": "TTM02", "NDVI_2021": 0.549, "NDVI_2025": 0.467, "NDVI_Mean": 0.4762, "NDVI_Std": 0.042, "NDVI_Delta": -0.082, "NDVI_Tren": "Memburuk", "NDMI_2021": 0.082, "NDMI_2025": 0.013, "NDMI_Mean": 0.0448, "NDMI_Std": 0.0256, "NDMI_Delta": -0.069, "NDMI_Tren": "Memburuk", "BSI_2021": -0.034, "BSI_2025": 0.035, "BSI_Mean": 0.0069, "BSI_Std": 0.0277, "BSI_Delta": 0.069, "BSI_Tren": "Memburuk", "NDVI_Slope": -0.0145, "NDMI_Slope": -0.0117, "BSI_Slope": 0.0103}], "ahp": {"NDVI": 0.539, "BSI": 0.2973, "NDMI": 0.1638}};
+
+const KELAS_COLOR = {
+  'Sangat Rendah': '#6E9B4F',
+  'Rendah':        '#8BAA5C',
+  'Sedang':        '#D9B23D',
+  'Tinggi':        '#D98A3D',
+  'Sangat Tinggi': '#C1453A'
+};
+const KELAS_ORDER = ['Sangat Rendah','Rendah','Sedang','Tinggi','Sangat Tinggi'];
+
+const KODE_LIST = DATA.detail.map(d=>d.Kode);
+const PALETTE = ['#8BAA5C','#D98A3D','#5FA8A3','#C1453A','#D9B23D','#7C9CBF','#B5651D','#4F8A5B','#A67CB5','#6B7A3F'];
+const KODE_COLOR = {};
+KODE_LIST.forEach((k,i)=> KODE_COLOR[k]=PALETTE[i%PALETTE.length]);
+
+function driveThumb(url){
+  const m = url && url.match(/[-\w]{20,}/);
+  return m ? `https://drive.google.com/thumbnail?id=${m[0]}&sz=w300` : url;
+}
+
+let state = {
+  kelasFilter: new Set(KELAS_ORDER),
+  selectedKode: new Set() // empty = tampilkan semua jalur; isi = sorot jalur terpilih
+};
+
+function fmt(n){ return (typeof n === 'number') ? n.toFixed(3) : n; }
+
+/* ---------- Stats ---------- */
+function renderStats(){
+  const total = DATA.detail.length;
+  const tinggi = DATA.detail.filter(d => d.Kelas_Prioritas==='Tinggi' || d.Kelas_Prioritas==='Sangat Tinggi').length;
+  const avgSkor = (DATA.detail.reduce((s,d)=>s+d.Skor_Prioritas,0)/total).toFixed(1);
+  const membaik = DATA.trend.filter(t=>t.NDVI_Tren==='Membaik').length;
+
+  const items = [
+    [total, 'Total Titik TTM'],
+    [tinggi, 'Prioritas Tinggi / Sangat Tinggi'],
+    [avgSkor, 'Rata-rata Skor Prioritas'],
+    [membaik + ' / ' + DATA.trend.length, 'Titik Tren NDVI Membaik']
+  ];
+  document.getElementById('stats').innerHTML = items.map(([n,l])=>
+    `<div class="stat"><div class="n">${n}</div><div class="l">${l}</div></div>`).join('');
+}
+
+/* ---------- Kelas filter chips ---------- */
+function renderChips(){
+  const el = document.getElementById('kelasChips');
+  el.innerHTML = KELAS_ORDER.map(k=>{
+    const active = state.kelasFilter.has(k);
+    const color = KELAS_COLOR[k];
+    return `<button class="chip ${active?'active':''}" data-kelas="${k}"
+      style="${active?`background:${color};border-color:${color}`:''}">${k}</button>`;
+  }).join('');
+  el.querySelectorAll('.chip').forEach(btn=>{
+    btn.onclick = ()=>{
+      const k = btn.dataset.kelas;
+      if(state.kelasFilter.has(k)) state.kelasFilter.delete(k); else state.kelasFilter.add(k);
+      renderAll();
+    };
+  });
+}
+
+function visibleDetail(){
+  return DATA.detail.filter(d=>state.kelasFilter.has(d.Kelas_Prioritas));
+}
+
+/* ---------- Titik list ---------- */
+function renderList(){
+  const list = visibleDetail();
+  document.getElementById('titikCount').textContent = list.length;
+  document.getElementById('titikList').innerHTML = list.map(d=>{
+    const sel = state.selectedKode.has(d.Kode);
+    return `<div class="titik-item ${sel?'selected':''}" data-kode="${d.Kode}">
+      <span class="dot" style="background:${KELAS_COLOR[d.Kelas_Prioritas]}"></span>
+      <span class="kode">${d.Kode}</span>
+      <span class="kelas">${d.Kelas_Prioritas}</span>
+    </div>`;
+  }).join('');
+  document.querySelectorAll('.titik-item').forEach(it=>{
+    it.onclick = ()=>{
+      const kode = it.dataset.kode;
+      if(state.selectedKode.has(kode)) state.selectedKode.delete(kode); else state.selectedKode.add(kode);
+      renderList();
+      renderTrendCharts();
+    };
+  });
+}
+
+/* ---------- Trend charts (vanilla SVG, tanpa dependency luar) ---------- */
+const YEARS = [2021,2022,2023,2024,2025];
+
+function lineChartSVG(metric){
+  const W=520, H=260, padL=42, padR=14, padT=14, padB=28;
+  const visibleCodes = new Set(visibleDetail().map(d=>d.Kode));
+  const vals = DATA.indeks.filter(r=>visibleCodes.has(r.Kode)).map(r=>r[metric]);
+  if(vals.length===0) return '<div style="padding:20px;color:var(--kabut-dim);font-size:12px">Tidak ada titik yang cocok dengan filter.</div>';
+  let yMin = Math.min(...vals), yMax = Math.max(...vals);
+  const pad = (yMax-yMin)*0.12 || 0.05;
+  yMin -= pad; yMax += pad;
+
+  const sx = i => padL + i/(YEARS.length-1) * (W-padL-padR);
+  const sy = v => (H-padB) - (v-yMin)/(yMax-yMin) * (H-padT-padB);
+
+  let grid = '';
+  const ticks = 5;
+  for(let t=0;t<=ticks;t++){
+    const v = yMin + (yMax-yMin)*t/ticks;
+    const y = sy(v);
+    grid += `<line x1="${padL}" y1="${y.toFixed(1)}" x2="${W-padR}" y2="${y.toFixed(1)}" stroke="#33402F" stroke-width="1"/>
+      <text x="${padL-6}" y="${(y+3).toFixed(1)}" font-size="9" fill="#A9AE9E" text-anchor="end" font-family="IBM Plex Mono">${v.toFixed(2)}</text>`;
+  }
+  if(yMin<0 && yMax>0){
+    const y0=sy(0);
+    grid += `<line x1="${padL}" y1="${y0.toFixed(1)}" x2="${W-padR}" y2="${y0.toFixed(1)}" stroke="#5FA8A3" stroke-width="1" stroke-dasharray="3,3"/>`;
+  }
+  const xLabels = YEARS.map((y,i)=>`<text x="${sx(i).toFixed(1)}" y="${H-padB+16}" font-size="9" fill="#A9AE9E" text-anchor="middle" font-family="IBM Plex Mono">${y}</text>`).join('');
+
+  let lines = '';
+  KODE_LIST.forEach(kode=>{
+    if(!visibleCodes.has(kode)) return;
+    const rows = DATA.indeks.filter(r=>r.Kode===kode).sort((a,b)=>a.Tahun-b.Tahun);
+    const pts = YEARS.map((y,i)=>{
+      const r = rows.find(r=>r.Tahun===y);
+      return r ? `${sx(i).toFixed(1)},${sy(r[metric]).toFixed(1)}` : null;
+    }).filter(Boolean).join(' ');
+    const dim = state.selectedKode.size>0 && !state.selectedKode.has(kode);
+    const color = KODE_COLOR[kode];
+    lines += `<polyline points="${pts}" fill="none" stroke="${color}" stroke-width="${dim?1:2.25}" opacity="${dim?0.2:0.95}"/>`;
+    YEARS.forEach((y,i)=>{
+      const r = rows.find(r=>r.Tahun===y);
+      if(r) lines += `<circle cx="${sx(i).toFixed(1)}" cy="${sy(r[metric]).toFixed(1)}" r="${dim?2:3}" fill="${color}" opacity="${dim?0.2:0.95}"/>`;
+    });
+  });
+
+  return `<svg viewBox="0 0 ${W} ${H}">${grid}${xLabels}${lines}</svg>`;
+}
+
+function renderTrendCharts(){
+  document.getElementById('chartNDVI').innerHTML = lineChartSVG('NDVI');
+  document.getElementById('chartNDMI').innerHTML = lineChartSVG('NDMI');
+  document.getElementById('chartBSI').innerHTML = lineChartSVG('BSI');
+  renderLegend();
+}
+
+function renderLegend(){
+  const visibleCodes = visibleDetail().map(d=>d.Kode);
+  document.getElementById('chartLegend').innerHTML = visibleCodes.map(kode=>{
+    const active = state.selectedKode.size===0 || state.selectedKode.has(kode);
+    return `<button class="legend-chip ${active?'active':''}" data-kode="${kode}" style="--c:${KODE_COLOR[kode]}"><span class="sw"></span>${kode}</button>`;
+  }).join('');
+  document.querySelectorAll('.legend-chip').forEach(b=>{
+    b.onclick = ()=>{
+      const kode = b.dataset.kode;
+      if(state.selectedKode.has(kode)) state.selectedKode.delete(kode); else state.selectedKode.add(kode);
+      renderTrendCharts();
+      renderList();
+    };
+  });
+}
+
+/* ---------- Tabel ringkasan tren (pengganti "vektor pemulihan") ---------- */
+function trenBadge(label){
+  const good = label === 'Membaik';
+  return `<span class="pill" style="background:${good?'#8BAA5C':'#C1453A'};color:#12170F">${label}</span>`;
+}
+function renderTrendTable(){
+  const visibleCodes = new Set(visibleDetail().map(d=>d.Kode));
+  const rows = DATA.trend.filter(t=>visibleCodes.has(t.Kode));
+  document.getElementById('trendTableBody').innerHTML = rows.map(t=>`<tr>
+      <td class="mono" style="font-weight:600">${t.Kode}</td>
+      <td class="mono">${t.NDVI_2021}</td><td class="mono">${t.NDVI_2025}</td>
+      <td class="mono">${t.NDVI_Delta>0?'+':''}${t.NDVI_Delta}</td><td>${trenBadge(t.NDVI_Tren)}</td>
+      <td class="mono">${t.NDMI_2021}</td><td class="mono">${t.NDMI_2025}</td>
+      <td class="mono">${t.NDMI_Delta>0?'+':''}${t.NDMI_Delta}</td><td>${trenBadge(t.NDMI_Tren)}</td>
+      <td class="mono">${t.BSI_2021}</td><td class="mono">${t.BSI_2025}</td>
+      <td class="mono">${t.BSI_Delta>0?'+':''}${t.BSI_Delta}</td><td>${trenBadge(t.BSI_Tren)}</td>
+    </tr>`).join('');
+}
+
+/* ---------- Table ---------- */
+function renderTable(){
+  const list = visibleDetail();
+  document.getElementById('tableHint').textContent = `Menampilkan ${list.length} dari ${DATA.detail.length} titik`;
+  document.getElementById('tableBody').innerHTML = list.map(d=>{
+    const color = KELAS_COLOR[d.Kelas_Prioritas];
+    return `<tr>
+      <td><img class="foto-thumb" src="${driveThumb(d.Foto_URL)}" alt="${d.Kode}"
+            onerror="this.onerror=null;this.classList.add('err');this.removeAttribute('src');this.textContent='no img';"></td>
+      <td class="mono" style="font-weight:600">${d.Kode}</td>
+      <td class="mono" style="font-size:11.5px">${d.Latitude}, ${d.Longitude}</td>
+      <td><span class="pill" style="background:${color};color:#12170F">${d.Kelas_Prioritas}</span></td>
+      <td class="mono">${d.Skor_Prioritas}</td>
+      <td class="mono">${d.NDVI_2025}</td>
+      <td class="mono">${d.NDMI_2025}</td>
+      <td class="mono">${d.BSI_2025}</td>
+      <td style="font-size:12px; color:var(--kabut-dim)">${d.Kondisi}</td>
+    </tr>`;
+  }).join('');
+}
+
+function renderAll(){
+  renderChips();
+  renderList();
+  renderTrendCharts();
+  renderTrendTable();
+  renderTable();
+}
+
+renderStats();
+renderAll();
+</script>
+</body>
+</html>
