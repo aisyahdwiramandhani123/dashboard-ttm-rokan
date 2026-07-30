@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css"/>
 <style>
   :root{
     --peat:#F6F4EA;
@@ -476,7 +476,7 @@
   Sumber data: TTM_Master_2021_2025_FIXED.xlsx (Dokumentasi Lapangan &amp; Citra Satelit) · Peta: <a href="https://aisyahdr.users.earthengine.app/view/peta-prioritas-remediasi-ttm-rokan" target="_blank" rel="noopener">Google Earth Engine App</a> · Dibuat untuk WK Rokan
 </footer>
 
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
 const DATA = /* ⬇️ PASTE ISI data.json DI SINI, GANTI SELURUH BARIS INI ⬇️ */ {};
 
@@ -855,7 +855,7 @@ function closeImageModal(){
 document.getElementById('imageModalClose').onclick = closeImageModal;
 document.getElementById('imageModalOverlay').onclick = (e)=>{ if(e.target.id==='imageModalOverlay') closeImageModal(); };
 
-initMap();
+try{ initMap(); } catch(e){ console.error('Peta Leaflet gagal dimuat:', e); }
 renderRanking();
 renderStats();
 renderAll();
